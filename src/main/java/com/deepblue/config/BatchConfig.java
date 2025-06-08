@@ -18,6 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.util.Arrays;
 
 @Configuration
+@EnableBatchProcessing
 public class BatchConfig {
 
 
