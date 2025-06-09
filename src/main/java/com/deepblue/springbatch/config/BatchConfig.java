@@ -1,18 +1,13 @@
 package com.deepblue.springbatch.config;
 
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.*;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -46,22 +41,49 @@ public class BatchConfig {
     public Job helloJob(JobRepository jobRepository, Step step1) {
         return new JobBuilder("helloJob", jobRepository)
                 .start(step1)
+                .listener(new JobExecutionListener() {
+                    @Override
+                    public void beforeJob(JobExecution jobExecution) {
+                        JobExecutionListener.super.beforeJob(jobExecution);
+                    }
+
+                    @Override
+                    public void afterJob(JobExecution jobExecution) {
+                        JobExecutionListener.super.afterJob(jobExecution);
+                    }
+                })
                 .build();
     }
 
     @Bean
     public Step helloStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("helloStep", jobRepository)
-                .<String, String>chunk(100, transactionManager)
+                .<String, String>chunk(2, transactionManager)
                 .reader(reader())
                 .processor(processor())
                 .writer(writer())
+                .listener(new StepExecutionListener() {
+                    @Override
+                    public ExitStatus afterStep(StepExecution stepExecution) {
+                        return StepExecutionListener.super.afterStep(stepExecution);
+                    }
+
+                    @Override
+                    public void beforeStep(StepExecution stepExecution) {
+                        StepExecutionListener.super.beforeStep(stepExecution);
+                    }
+                })
                 .build();
     }
 
     @Bean
     public ItemReader<String> reader() {
-        return new ListItemReader<>(Arrays.asList("apple", "banana", "orange"));
+        return new ItemReader<String>() {
+            @Override
+            public String read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+                return "Hello World";
+            }
+        };
     }
 
     @Bean
@@ -71,7 +93,6 @@ public class BatchConfig {
 
     @Bean
     public ItemWriter<String> writer() {
-
         return items -> items.forEach(System.out::println);
     }
 
