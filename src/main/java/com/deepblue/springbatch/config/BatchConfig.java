@@ -1,30 +1,42 @@
 package com.deepblue.springbatch.config;
 
 
+import com.deepblue.springbatch.reader.MineItemReader;
+import com.google.common.collect.Lists;
+import jakarta.annotation.Resource;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.*;
 import org.springframework.batch.item.support.ListItemReader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 @Configuration
 @EnableBatchProcessing
 public class BatchConfig {
+
+    @Resource
+    private MineItemReader mineItemReader;
 
     @Bean
     public CommandLineRunner run(JobLauncher jobLauncher, Job helloJob) {
         return args -> {
             JobParameters jobParameters = new JobParametersBuilder()
                     .addLong("timestamp", System.currentTimeMillis()) // 防止重复执行
+                    .addJobParameter("dataList", List.of("zhangsan", "lisi", "wangwu") , List.class)
                     .toJobParameters();
             jobLauncher.run(helloJob, jobParameters);
         };
@@ -32,7 +44,6 @@ public class BatchConfig {
 
     /**
      * 创建 JOB
-     *
      * @param jobRepository
      * @param step1
      * @return
@@ -56,10 +67,17 @@ public class BatchConfig {
     }
 
     @Bean
+    public ItemReader<String> reader() {
+        // 设置固定的 ItemReader
+        return new ListItemReader<>(List.of("zhangsan", "lisi", "wangwu"));
+    }
+
+    @Bean
     public Step helloStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("helloStep", jobRepository)
-                .<String, String>chunk(2, transactionManager)
-                .reader(reader())
+                .<String, String>chunk(1, transactionManager)
+//                .reader(reader())
+                .reader(mineItemReader)
                 .processor(processor())
                 .writer(writer())
                 .listener(new StepExecutionListener() {
@@ -74,16 +92,6 @@ public class BatchConfig {
                     }
                 })
                 .build();
-    }
-
-    @Bean
-    public ItemReader<String> reader() {
-        return new ItemReader<String>() {
-            @Override
-            public String read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-                return "Hello World";
-            }
-        };
     }
 
     @Bean
