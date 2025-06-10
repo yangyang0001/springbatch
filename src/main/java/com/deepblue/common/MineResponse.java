@@ -1,4 +1,4 @@
-package com.deepblue.springbatch.common;
+package com.deepblue.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

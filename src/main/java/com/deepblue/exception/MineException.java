@@ -1,4 +1,4 @@
-package com.deepblue.springbatch.exception;
+package com.deepblue.exception;
 
 import lombok.Data;
 

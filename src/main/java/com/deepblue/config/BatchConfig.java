@@ -1,27 +1,21 @@
-package com.deepblue.springbatch.config;
+package com.deepblue.config;
 
 
-import com.deepblue.springbatch.reader.MineItemReader;
-import com.google.common.collect.Lists;
+import com.deepblue.reader.MineItemReader;
 import jakarta.annotation.Resource;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.*;
 import org.springframework.batch.item.support.ListItemReader;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 @Configuration
@@ -52,6 +46,7 @@ public class BatchConfig {
     public Job helloJob(JobRepository jobRepository, Step step1) {
         return new JobBuilder("helloJob", jobRepository)
                 .start(step1)
+                .next(step1)
                 .listener(new JobExecutionListener() {
                     @Override
                     public void beforeJob(JobExecution jobExecution) {
@@ -67,15 +62,9 @@ public class BatchConfig {
     }
 
     @Bean
-    public ItemReader<String> reader() {
-        // 设置固定的 ItemReader
-        return new ListItemReader<>(List.of("zhangsan", "lisi", "wangwu"));
-    }
-
-    @Bean
     public Step helloStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("helloStep", jobRepository)
-                .<String, String>chunk(1, transactionManager)
+                .<String, String>chunk(5, transactionManager)
 //                .reader(reader())
                 .reader(mineItemReader)
                 .processor(processor())
@@ -92,6 +81,12 @@ public class BatchConfig {
                     }
                 })
                 .build();
+    }
+
+    @Bean
+    public ItemReader<String> reader() {
+        // 设置固定的 ItemReader
+        return new ListItemReader<>(List.of("zhangsan", "lisi", "wangwu"));
     }
 
     @Bean

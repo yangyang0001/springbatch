@@ -1,6 +1,7 @@
-package com.deepblue.springbatch.reader;
+package com.deepblue.reader;
 
 import com.alibaba.fastjson.JSON;
+import com.deepblue.entity.MineJobParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
@@ -49,12 +50,19 @@ public class MineItemReader implements ItemStreamReader<String> {
         list.add("bbb");
         list.add("ccc");
 
+        System.out.println("list = " + JSON.toJSONString(list));
+
         long size = list.size();
-        for (int i = 0; i < size; i++) {
-            System.out.println(list.size());
-            String remove = list.remove(0);
-            System.out.println("remove = " + remove);
-        }
+//        for (int i = 0; i < size; i++) {
+//            System.out.println(list.size());
+//            String remove = list.remove(0);
+//            System.out.println("remove = " + remove);
+//        }
+
+        MineJobParam param = new MineJobParam();
+        param.setDataList(list);
+
+        System.out.println("param :" + JSON.toJSONString(param));
 
     }
 }

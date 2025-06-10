@@ -1,26 +1,25 @@
-package com.deepblue.springbatch.controller;
+package com.deepblue.controller;
 
 
-import com.deepblue.springbatch.common.ErrorCodeEnum;
-import com.deepblue.springbatch.common.MineResponse;
+import com.deepblue.common.ErrorCodeEnum;
+import com.deepblue.common.MineResponse;
+import com.deepblue.entity.MineJobParam;
 import jakarta.annotation.Resource;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Controller
+/**
+ * 测试 HTTP POST 调用 SpringBatch
+ */
+@RestController
 public class SpringBatchController {
 
     @Resource
@@ -30,11 +29,11 @@ public class SpringBatchController {
     @Qualifier("helloJob")
     private Job helloJob;
 
-    @PostMapping("/run")
-    public MineResponse<String> run(@RequestBody List<String> dataList) {
+    @PostMapping("/helloJob")
+    public MineResponse<String> helloJob(@RequestBody MineJobParam param) {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("timestamp", System.currentTimeMillis()) // 防止重复执行
-                .addJobParameter("dataList", dataList , List.class)
+                .addJobParameter("dataList", param.getDataList() , List.class)
                 .toJobParameters();
 
         try {
