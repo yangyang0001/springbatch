@@ -16,5 +16,8 @@ JDK8 后的 juc 包中的 CompletableFuture, 如果不定义线程池, 则默认
 
 未来会加上 EasyExcel 相关的东西
 
-
-
+AWS.SNS.SMS.SenderID
+AWS.SNS.SMS.SMSType
+AWS.SNS.SMS.StatusSuccessSamplingRate
+AWS.SNS.SMS.Status
+AWS.SNS.SMS.SMSUsageReportTopicArn

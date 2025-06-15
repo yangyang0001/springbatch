@@ -109,6 +109,11 @@
             <version>2.25.13</version> <!-- 可替换为最新版 -->
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
 
 
 
