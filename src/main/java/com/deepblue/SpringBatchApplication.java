@@ -1,11 +1,15 @@
 package com.deepblue;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
+@EnableAspectJAutoProxy
 @SpringBootApplication
+@MapperScan("com.deepblue.limiter.mapper")
 public class SpringBatchApplication {
 
     public static void main(String[] args) {
@@ -13,3 +17,4 @@ public class SpringBatchApplication {
     }
 
 }
+

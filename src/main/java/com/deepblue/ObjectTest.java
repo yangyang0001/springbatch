@@ -7,6 +7,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import lombok.Data;
+import lombok.experimental.Accessors;
+import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,7 +98,33 @@ public class ObjectTest {
         SnsDeliveryMessage snsDeliveryMessage = objectMapper.readValue(jsonMessage, SnsDeliveryMessage.class);
         System.out.println("message = " + JSON.toJSONString(snsDeliveryMessage));
 
+        System.out.println("-------------------------------------------------------------------------");
 
+        A a = new A();
+        a.setCustomerId("zhangsan");
+
+        B b = new B();
+
+        BeanUtils.copyProperties(a, b);
+        System.out.println("b json is :" + JSON.toJSONString(b));
+
+
+
+    }
+
+
+
+
+    @Data
+    @Accessors(chain = true)
+    public static class A {
+        private String customerId;
+    }
+
+    @Data
+    @Accessors(chain = true)
+    public static class B {
+        private Long customerId;
     }
 
 }
