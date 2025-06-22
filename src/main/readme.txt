@@ -31,3 +31,18 @@ AWS.SNS.SMS.Status
 AWS.SNS.SMS.SMSUsageReportTopicArn
 
 
+http://localhost:8080/swagger-ui.html
+http://localhost:8080/swagger-ui/index.html
+
+curl -X POST http://localhost:8080/excel/upload \
+  -H "Content-Type: multipart/form-data" \
+  -F "/Users/yangjianwei/Downloads/用户信息.xlsx"
+
+curl -X 'POST' \
+'http://localhost:8080/excel/upload' \
+-H "Content-Type: multipart/form-data" \
+-d '{
+"file": "/Users/yangjianwei/Downloads/用户信息.xlsx"
+}'
+
+

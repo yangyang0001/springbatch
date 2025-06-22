@@ -3,8 +3,6 @@ package com.deepblue.test;
 import com.alibaba.fastjson.JSON;
 import com.deepblue.test.entity.Mine;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
