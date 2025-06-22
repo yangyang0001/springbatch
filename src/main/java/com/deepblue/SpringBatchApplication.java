@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableAspectJAutoProxy
 @SpringBootApplication
-@MapperScan("com.deepblue.limiter.mapper")
 public class SpringBatchApplication {
 
     public static void main(String[] args) {
