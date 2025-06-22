@@ -18,12 +18,25 @@ AOP 基于 @Aspect 实现
 
 JDK8 后的 juc 包中的 CompletableFuture, 如果不定义线程池, 则默认使用 ForkJoinPool, 如果想学习并发相关的知识 参考 https://github.com/yangyang0001/java_concurrent.git
 
+EasyExcel 导入导出
+
+Swagger 查看当前工程中的接口, 这个必须要引入 依赖!
+<!-- springdoc -->
+<dependency>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    <version>2.8.9</version>
+</dependency>
+http://localhost:8080/swagger-ui.html
+http://localhost:8080/swagger-ui/index.html
+
+
+
 如果想学习或了解 springboot  参考 https://github.com/yangyang0001/springboot_mine.git 或 https://github.com/yangyang0001/java_springboot.git
 
 如果想学习或了解 springcloud 参考 https://github.com/yangyang0001/springcloud.git
 
-未来会加上 EasyExcel 相关的东西
-
+Amazon 亚马逊云相关
 AWS.SNS.SMS.SenderID
 AWS.SNS.SMS.SMSType
 AWS.SNS.SMS.StatusSuccessSamplingRate
@@ -31,18 +44,6 @@ AWS.SNS.SMS.Status
 AWS.SNS.SMS.SMSUsageReportTopicArn
 
 
-http://localhost:8080/swagger-ui.html
-http://localhost:8080/swagger-ui/index.html
 
-curl -X POST http://localhost:8080/excel/upload \
-  -H "Content-Type: multipart/form-data" \
-  -F "/Users/yangjianwei/Downloads/用户信息.xlsx"
-
-curl -X 'POST' \
-'http://localhost:8080/excel/upload' \
--H "Content-Type: multipart/form-data" \
--d '{
-"file": "/Users/yangjianwei/Downloads/用户信息.xlsx"
-}'
 
 
