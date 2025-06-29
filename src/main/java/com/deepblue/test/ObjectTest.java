@@ -1,6 +1,7 @@
 package com.deepblue.test;
 
 import com.alibaba.fastjson.JSON;
+import com.deepblue.dynamicds.entity.Student;
 import com.deepblue.springbatch.entity.MineJobParam;
 import com.deepblue.test.entity.Mine;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -73,6 +74,15 @@ public class ObjectTest {
         List<String> dataList = Arrays.asList("zhangsan", "lisi", "wangwu");
         param.setDataList(dataList);
         System.out.println("param is :" + JSON.toJSONString(param));
+
+        System.out.println("-------------------------------------------------------------------------");
+        Student student = new Student();
+        student.setAge(10);
+        student.setName("zhangsan_new_database");
+        student.setGender(1);
+        student.setDelFlag(0);
+
+        System.out.println("student is :" + JSON.toJSONString(student));
 
 
 
