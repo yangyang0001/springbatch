@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-public class MineJobParam<String> extends Param<String> {
+public class MineJobParam<T> extends Param<T> {
 
-    private List<String> dataList;
+    private List<T> dataList;
 }

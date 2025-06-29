@@ -12,6 +12,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
  * 测试 HTTP POST 调用 SpringBatch
  */
 @RestController
+@RequestMapping("/springbatch")
 public class SpringBatchController {
 
     @Resource

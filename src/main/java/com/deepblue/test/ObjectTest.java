@@ -1,6 +1,7 @@
 package com.deepblue.test;
 
 import com.alibaba.fastjson.JSON;
+import com.deepblue.springbatch.entity.MineJobParam;
 import com.deepblue.test.entity.Mine;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
@@ -65,6 +66,13 @@ public class ObjectTest {
 
         BeanUtils.copyProperties(a, b);
         System.out.println("b json is :" + JSON.toJSONString(b));
+
+        System.out.println("-------------------------------------------------------------------------");
+
+        MineJobParam<String> param = new MineJobParam<>();
+        List<String> dataList = Arrays.asList("zhangsan", "lisi", "wangwu");
+        param.setDataList(dataList);
+        System.out.println("param is :" + JSON.toJSONString(param));
 
 
 
