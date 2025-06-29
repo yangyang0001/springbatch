@@ -1,6 +1,7 @@
 package com.deepblue.dynamicds.service.impl;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.deepblue.dynamicds.entity.Student;
 import com.deepblue.dynamicds.mapper.StudentMapper;
 import com.deepblue.dynamicds.service.StudentService;
@@ -31,13 +32,17 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Integer deleteStudent(Integer id) {
+    public Integer deleteStudent(Long id) {
         return 0;
     }
 
+    @DS("tidb")
     @Override
-    public Student selectStudentById(Integer id) {
-        return null;
+    public Student selectStudentById(Long id) {
+        QueryWrapper<Student> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(Student::getId, id);
+        wrapper.last("limit 1");
+        return studentMapper.selectOne(wrapper);
     }
 
     @Override

@@ -10,9 +10,9 @@ public interface StudentService {
 
     Integer updateStudent(Student student);
 
-    Integer deleteStudent(Integer id);
+    Integer deleteStudent(Long id);
 
-    Student selectStudentById(Integer id);
+    Student selectStudentById(Long id);
 
     List<Student> selectPageList(Student student, Long pageNo, Long pageSize);
 
