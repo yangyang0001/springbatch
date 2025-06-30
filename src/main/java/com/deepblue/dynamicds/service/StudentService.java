@@ -8,6 +8,8 @@ public interface StudentService {
 
     Integer insertStudent(Student student);
 
+    Integer insertDefault(Student student);
+
     Integer updateStudent(Student student);
 
     Integer deleteStudent(Long id);
