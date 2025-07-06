@@ -1,4 +1,4 @@
-package com.deepblue.springschedule;
+package com.deepblue.schedule;
 
 import com.deepblue.async.service.CommonService;
 import jakarta.annotation.Resource;
