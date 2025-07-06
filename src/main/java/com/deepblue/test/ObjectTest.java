@@ -2,6 +2,7 @@ package com.deepblue.test;
 
 import com.alibaba.fastjson.JSON;
 import com.deepblue.dynamicds.entity.Student;
+import com.deepblue.kafka.entity.MineRecord;
 import com.deepblue.springbatch.entity.MineJobParam;
 import com.deepblue.test.entity.Mine;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -84,7 +85,32 @@ public class ObjectTest {
 
         System.out.println("student is :" + JSON.toJSONString(student));
 
+        System.out.println("-------------------------------------------------------------------------");
 
+        MineRecord record1 = new MineRecord();
+        MineRecord record2 = new MineRecord();
+        MineRecord record3 = new MineRecord();
+        MineRecord record4 = new MineRecord();
+        MineRecord record5 = new MineRecord();
+        MineRecord record6 = new MineRecord();
+
+        record1.setId(1L).setName("zhangsan1").setPass("1111111111").setAge(11);
+        record2.setId(2L).setName("zhangsan2").setPass("2222222222").setAge(21);
+        record3.setId(3L).setName("zhangsan3").setPass("3333333333").setAge(31);
+        record4.setId(4L).setName("zhangsan4").setPass("4444444444").setAge(41);
+        record5.setId(5L).setName("zhangsan5").setPass("5555555555").setAge(51);
+        record6.setId(6L).setName("zhangsan6").setPass("6666666666").setAge(61);
+
+        System.out.println("record1 is :" + JSON.toJSONString(record1));
+
+        List<MineRecord> records = new ArrayList<>();
+        records.add(record1);
+        records.add(record2);
+        records.add(record3);
+        records.add(record4);
+        records.add(record5);
+        records.add(record6);
+        System.out.println("records is :" + JSON.toJSONString(records));
 
     }
 

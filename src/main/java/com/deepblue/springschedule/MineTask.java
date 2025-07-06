@@ -16,7 +16,7 @@ public class MineTask {
     @Resource
     private List<CommonService> services;
 
-    @Scheduled(cron = "0/20 * * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void sayHello() {
         System.out.println("MineTask start ----------------------------------------------------------------------");
         System.out.println("Hello World");
