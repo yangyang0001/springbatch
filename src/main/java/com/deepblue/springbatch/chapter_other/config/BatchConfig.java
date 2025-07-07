@@ -1,7 +1,7 @@
-package com.deepblue.springbatch.config;
+package com.deepblue.springbatch.chapter_other.config;
 
 
-import com.deepblue.springbatch.reader.MineItemReader;
+import com.deepblue.springbatch.chapter_other.reader.MineItemReader;
 import jakarta.annotation.Resource;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;

@@ -1,4 +1,4 @@
-package com.deepblue.springbatch.entity;
+package com.deepblue.springbatch.chapter_other.entity;
 
 import java.io.Serializable;
 

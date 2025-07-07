@@ -3,7 +3,7 @@ package com.deepblue.test;
 import com.alibaba.fastjson.JSON;
 import com.deepblue.dynamicds.entity.Student;
 import com.deepblue.kafka.entity.MineRecord;
-import com.deepblue.springbatch.entity.MineJobParam;
+import com.deepblue.springbatch.chapter_other.entity.MineJobParam;
 import com.deepblue.test.entity.Mine;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;

@@ -1,9 +1,9 @@
-package com.deepblue.springbatch.controller;
+package com.deepblue.springbatch.chapter_other.controller;
 
 
 import com.deepblue.exception.common.ErrorCodeEnum;
 import com.deepblue.exception.common.MineResponse;
-import com.deepblue.springbatch.entity.MineJobParam;
+import com.deepblue.springbatch.chapter_other.entity.MineJobParam;
 import jakarta.annotation.Resource;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;

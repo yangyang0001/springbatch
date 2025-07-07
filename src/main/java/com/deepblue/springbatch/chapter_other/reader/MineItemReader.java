@@ -1,7 +1,7 @@
-package com.deepblue.springbatch.reader;
+package com.deepblue.springbatch.chapter_other.reader;
 
 import com.alibaba.fastjson.JSON;
-import com.deepblue.springbatch.entity.MineJobParam;
+import com.deepblue.springbatch.chapter_other.entity.MineJobParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;

@@ -1,4 +1,4 @@
-package com.deepblue.springbatch.entity;
+package com.deepblue.springbatch.chapter_other.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
