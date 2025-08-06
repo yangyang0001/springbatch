@@ -25,8 +25,6 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class RateLimiterCacheConfig {
 
-    private List<LimitRule> ruleList = new ArrayList<>();
-
     private LoadingCache<String, RRateLimiter> limiterCache;
 
     @Autowired
@@ -37,6 +35,10 @@ public class RateLimiterCacheConfig {
 
     @PostConstruct
     public void init() {
+
+
+
+
         limiterCache = CacheBuilder.newBuilder()
                 .maximumSize(1000)
                 .refreshAfterWrite(1, TimeUnit.MINUTES)
@@ -45,6 +47,7 @@ public class RateLimiterCacheConfig {
                     public RRateLimiter load(String key) throws Exception {
                         QueryWrapper<LimitRule> wrapper = new QueryWrapper<>();
                         wrapper.lambda().orderByAsc(LimitRule::getId);
+                        List<LimitRule> ruleList = new ArrayList<>();
                         try {
                             ruleList = limitRuleMapper.selectList(wrapper);
                         } catch (Exception ex) {
