@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Excel 文件上传测试</title>
+</head>
+<body>
+<h2>上传 Excel 文件</h2>
+<form method="POST" action="http://localhost:8080/excel/upload" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".xls,.xlsx" required />
+    <button type="submit">上传</button>
+</form>
+</body>
+</html>

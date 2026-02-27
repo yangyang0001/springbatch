@@ -1,0 +1,23 @@
+update msg_sms_send_record t JOIN (
+			SELECT '1' AS id, 'ALI1' AS provider_code, 'ALIYUN1' AS actual_provider, 1 AS state, '2025-08-07 10:00:00' AS send_time, 'MID1' AS msg_id, 0 AS send_retry, 3 AS result_status, 'msg-1' AS remark, NULL AS create_time
+  UNION ALL SELECT '2' AS id, 'ALI2' AS provider_code, 'ALIYUN2' AS actual_provider, 2 AS state, '2025-08-07 10:00:00' AS send_time, 'MID2' AS msg_id, 2 AS send_retry, 3 AS result_status, 'msg-2' AS remark, NULL AS create_time
+  UNION ALL SELECT '3' AS id, 'ALI3' AS provider_code, 'ALIYUN3' AS actual_provider, 3 AS state, '2025-08-07 10:00:00' AS send_time, 'MID3' AS msg_id, 3 AS send_retry, 3 AS result_status, 'msg-3' AS remark, NULL AS create_time
+  UNION ALL SELECT '4' AS id, 'ALI4' AS provider_code, 'ALIYUN4' AS actual_provider, 4 AS state, '2025-08-07 10:00:00' AS send_time, 'MID4' AS msg_id, 4 AS send_retry, 3 AS result_status, 'msg-4' AS remark, NULL AS create_time
+  UNION ALL SELECT '5' AS id, 'ALI5' AS provider_code, 'ALIYUN5' AS actual_provider, 5 AS state, '2025-08-07 10:00:00' AS send_time, 'MID5' AS msg_id, 5 AS send_retry, 3 AS result_status, 'msg-5' AS remark, NULL AS create_time
+  UNION ALL SELECT '6' AS id, 'ALI6' AS provider_code, 'ALIYUN6' AS actual_provider, 6 AS state, '2025-08-07 10:00:00' AS send_time, 'MID6' AS msg_id, 6 AS send_retry, 3 AS result_status, 'msg-6' AS remark, NULL AS create_time
+  UNION ALL SELECT '7' AS id, 'ALI7' AS provider_code, 'ALIYUN7' AS actual_provider, 7 AS state, '2025-08-07 10:00:00' AS send_time, 'MID7' AS msg_id, 7 AS send_retry, 3 AS result_status, 'msg-7' AS remark, NULL AS create_time
+  UNION ALL SELECT '8' AS id, 'ALI8' AS provider_code, 'ALIYUN8' AS actual_provider, 8 AS state, '2025-08-07 10:00:00' AS send_time, 'MID8' AS msg_id, 8 AS send_retry, 3 AS result_status, 'msg-8' AS remark, NULL AS create_time
+  UNION ALL SELECT '9' AS id, 'ALI9' AS provider_code, 'ALIYUN9' AS actual_provider, 9 AS state, '2025-08-07 10:00:00' AS send_time, 'MID9' AS msg_id, 9 AS send_retry, 3 AS result_status, 'msg-9' AS remark, NULL AS create_time
+  UNION ALL SELECT '10' AS id, 'ALI10' AS provider_code, 'ALIYUN10' AS actual_provider, 10 AS state, '2025-08-07 10:00:00' AS send_time, 'MID10' AS msg_id, 10 AS send_retry, 3 AS result_status, 'msg-10' AS remark, NULL AS create_time
+
+) tmp ON t.id = tmp.id AND (tmp.create_time IS NULL OR t.create_time = tmp.create_time)
+
+SET
+    t.actual_provider = IF(tmp.actual_provider IS NOT NULL, tmp.actual_provider, t.actual_provider),
+    t.state = IF(tmp.state IS NOT NULL, tmp.state, t.state),
+    t.send_time = IF(tmp.send_time IS NOT NULL, tmp.send_time, t.send_time),
+    t.msg_id = IF(tmp.msg_id IS NOT NULL, tmp.msg_id, t.msg_id),
+    t.send_retry = IF(tmp.send_retry IS NOT NULL, tmp.send_retry, t.send_retry),
+    t.result_status = IF(tmp.result_status IS NOT NULL, tmp.result_status, t.result_status),
+    t.remark = IF(tmp.remark IS NOT NULL, tmp.remark, t.remark),
+    t.update_time = NOW();

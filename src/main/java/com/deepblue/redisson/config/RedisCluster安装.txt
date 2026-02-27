@@ -1,0 +1,281 @@
+-------------------------------------------------------------------- RedisCluster 安装 --------------------------------------------------------
+
+按照 3主3从进行安装 redis cluster, 扩容为4主4从, 最后缩容为3主3从; 在一台主机上安装就OK了!
+
+cd /home/redis
+
+mkdir 6179
+mkdir 6279
+mkdir 6379
+
+mkdir 6479
+mkdir 6579
+mkdir 6679
+
+cp -r db/ 6179/
+cp -r db/ 6279/
+cp -r db/ 6379/
+cp -r db/ 6479/
+cp -r db/ 6579/
+cp -r db/ 6679/
+
+cp -r logs/ 6179/
+cp -r logs/ 6279/
+cp -r logs/ 6379/
+cp -r logs/ 6479/
+cp -r logs/ 6579/
+cp -r logs/ 6679/
+
+
+sed 's/6179/6279/g' redis_6179.conf > redis_6279.conf
+sed 's/6179/6379/g' redis_6179.conf > redis_6379.conf
+sed 's/6179/6479/g' redis_6179.conf > redis_6479.conf
+sed 's/6179/6579/g' redis_6179.conf > redis_6579.conf
+sed 's/6179/6679/g' redis_6179.conf > redis_6679.conf
+
+
+mv redis_6179.conf 6179/
+mv redis_6279.conf 6279/
+mv redis_6379.conf 6379/
+mv redis_6479.conf 6479/
+mv redis_6579.conf 6579/
+mv redis_6679.conf 6679/
+
+cd /home/redis/bin
+./redis-server ../6179/redis_6179.conf
+./redis-server ../6279/redis_6279.conf
+./redis-server ../6379/redis_6379.conf
+./redis-server ../6479/redis_6479.conf
+./redis-server ../6579/redis_6579.conf
+./redis-server ../6679/redis_6679.conf
+
+
+-c 是官方提供的 -cluster 的意思!
+
+./redis-cli -h 127.0.0.1 -p 6179 -a root -c 就可以使用官方客户端了!
+./redis-cli -h 127.0.0.1 -p 6279 -a root -c
+./redis-cli -h 127.0.0.1 -p 6379 -a root -c
+
+创建集群:[6.2.0 版本必须自己创建]
+cd /home/redis/bin
+./redis-cli --cluster create \
+192.168.188.96:6179 192.168.188.96:6279 192.168.188.96:6379 \
+192.168.188.96:6479 192.168.188.96:6579 192.168.188.96:6679 \
+--cluster-replicas 1 -a root
+
+命令查看当前集群的节点:
+    127.0.0.1:6179> CLUSTER NODES
+    cbbb827d960488e8d2ee0ae7553fd8cd84bbee5e 192.168.188.83:6379@16379 master - 0 1736153743199 3 connected 10923-16383
+    1e35ba6207c018764378fae0782abbdb0e7a5e3e 192.168.188.83:6479@16479 slave 0607058535b7657e60e0861c43c1de314f3b05a1 0 1736153741000 4 connected
+    b50362322e5110ecd81b6746a6042786b7f6c980 192.168.188.83:6579@16579 slave cbbb827d960488e8d2ee0ae7553fd8cd84bbee5e 0 1736153741193 5 connected
+    52f1949bcfb8be43b94fab31e6d93e92e23addad 192.168.188.83:6679@16679 slave 913f73a90e3986b689ef9ab37dec84273712a909 0 1736153742000 6 connected
+    0607058535b7657e60e0861c43c1de314f3b05a1 192.168.188.83:6279@16279 master - 0 1736153742196 2 connected 5461-10922
+    913f73a90e3986b689ef9ab37dec84273712a909 192.168.188.83:6179@16179 myself,master - 0 1736153740000 1 connected 0-5460
+
+使用客户端命令来创建集群:
+    [root@localhost bin]# ./redis-cli --cluster help
+    Cluster Manager Commands:
+      create         host1:port1 ... hostN:portN
+                     --cluster-replicas <arg>
+      check          host:port
+      info           host:port
+      fix            host:port
+      reshard        host:port
+                     --cluster-from <arg>
+                     --cluster-to <arg>
+                     --cluster-slots <arg>
+                     --cluster-yes
+                     --cluster-timeout <arg>
+                     --cluster-pipeline <arg>
+      rebalance      host:port
+                     --cluster-weight <node1=w1...nodeN=wN>
+                     --cluster-use-empty-masters
+                     --cluster-timeout <arg>
+                     --cluster-simulate
+                     --cluster-pipeline <arg>
+                     --cluster-threshold <arg>
+      add-node       new_host:new_port existing_host:existing_port
+                     --cluster-slave
+                     --cluster-master-id <arg>
+      del-node       host:port node_id
+      call           host:port command arg arg .. arg
+      set-timeout    host:port milliseconds
+      import         host:port
+                     --cluster-from <arg>
+                     --cluster-copy
+                     --cluster-replace
+      help
+
+    --cluster-replicas 参数含义: 至少要有3个主节点! 所以有以下比例:
+                cluster-replicas 1 表示 从节点:主节点 = 1:1     至少 6台redis服务 3主3从
+                cluster-replicas 2 表示 从节点:主节点 = 2:1     至少 9台redis服务 3主6从   最常用!
+                cluster-replicas 3 表示 从节点:主节点 = 3:1     至少12台redis服务 3主9从
+
+    [root@localhost bin]# ./redis-cli -a root --cluster create 192.168.188.9:6179 192.168.188.9:6279 192.168.188.9:6379 192.168.188.9:6479 192.168.188.9:6579 192.168.188.9:6679 --cluster-replicas 1
+    Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+    >>> Performing hash slots allocation on 6 nodes...
+    Master[0] -> Slots 0 - 5460
+    Master[1] -> Slots 5461 - 10922
+    Master[2] -> Slots 10923 - 16383
+    Adding replica 192.168.188.9:6479 to 192.168.188.9:6179
+    Adding replica 192.168.188.9:6579 to 192.168.188.9:6279
+    Adding replica 192.168.188.9:6679 to 192.168.188.9:6379
+    >>> Trying to optimize slaves allocation for anti-affinity
+    [WARNING] Some slaves are in the same host as their master
+    M: 65d7d148c171054e4d2394dc84aaf72915391bfe 192.168.188.9:6179
+       slots:[0-5460] (5461 slots) master
+    M: 5d9003a5137fe5f96dda619fff7f15c6b993dab5 192.168.188.9:6279
+       slots:[5461-10922] (5462 slots) master
+    M: 21d4b1ebed6a5cbb165145c429cde639f9399d0c 192.168.188.9:6379
+       slots:[10923-16383] (5461 slots) master
+    S: 13da255fa30fd4a4337093ae3d9c0d3a1b3a8023 192.168.188.9:6479
+       replicates 21d4b1ebed6a5cbb165145c429cde639f9399d0c
+    S: b83ee4d91480749814f9c7099039ce9512a313c9 192.168.188.9:6579
+       replicates 65d7d148c171054e4d2394dc84aaf72915391bfe
+    S: 9cfd658c1121b5c70e1df03988a111328b061ab7 192.168.188.9:6679
+       replicates 5d9003a5137fe5f96dda619fff7f15c6b993dab5
+    Can I set the above configuration? (type 'yes' to accept): yes
+    >>> Nodes configuration updated
+    >>> Assign a different config epoch to each node
+    >>> Sending CLUSTER MEET messages to join the cluster
+    Waiting for the cluster to join
+    ....
+    >>> Performing Cluster Check (using node 192.168.188.9:6179)
+    M: 65d7d148c171054e4d2394dc84aaf72915391bfe 192.168.188.9:6179
+       slots:[0-5460] (5461 slots) master
+       1 additional replica(s)
+    S: 9cfd658c1121b5c70e1df03988a111328b061ab7 192.168.188.9:6679
+       slots: (0 slots) slave
+       replicates 5d9003a5137fe5f96dda619fff7f15c6b993dab5
+    S: 13da255fa30fd4a4337093ae3d9c0d3a1b3a8023 192.168.188.9:6479
+       slots: (0 slots) slave
+       replicates 21d4b1ebed6a5cbb165145c429cde639f9399d0c
+    M: 5d9003a5137fe5f96dda619fff7f15c6b993dab5 192.168.188.9:6279
+       slots:[5461-10922] (5462 slots) master
+       1 additional replica(s)
+    M: 21d4b1ebed6a5cbb165145c429cde639f9399d0c 192.168.188.9:6379
+       slots:[10923-16383] (5461 slots) master
+       1 additional replica(s)
+    S: b83ee4d91480749814f9c7099039ce9512a313c9 192.168.188.9:6579
+       slots: (0 slots) slave
+       replicates 65d7d148c171054e4d2394dc84aaf72915391bfe
+    [OK] All nodes agree about slots configuration.
+    >>> Check for open slots...
+    >>> Check slots coverage...
+    [OK] All 16384 slots covered.
+
+
+扩容两台:
+    流程: 先添 add-node, 再转移 slot
+
+    首先添加 add-node
+        cd /home/redis
+        mkdir 6779
+        mkdir 6879
+
+        sed 's/6179/6779/g' redis_6179.conf > /home/redis/6779/redis_6779.conf
+        sed 's/6179/6879/g' redis_6179.conf > /home/redis/6879/redis_6879.conf
+
+        ./redis-server ../6779/redis_6779.conf
+        ./redis-server ../6879/redis_6879.conf
+
+
+        add-node       new_host:new_port existing_host:existing_port
+                     --cluster-slave
+                     --cluster-master-id <arg>
+        [root@localhost bin]# ./redis-cli -a root --cluster add-node 192.168.188.9:6779 192.168.188.9:6179
+
+            cluster nodes 展示:
+            65d7d148c171054e4d2394dc84aaf72915391bfe 192.168.188.9:6179@16179 myself,master - 0 1644688790000 1 connected 0-5460
+            5d9003a5137fe5f96dda619fff7f15c6b993dab5 192.168.188.9:6279@16279 master - 0 1644688790000 2 connected 5461-10922
+            21d4b1ebed6a5cbb165145c429cde639f9399d0c 192.168.188.9:6379@16379 master - 0 1644688788000 3 connected 10923-16383
+
+            13da255fa30fd4a4337093ae3d9c0d3a1b3a8023 192.168.188.9:6479@16479 slave 21d4b1ebed6a5cbb165145c429cde639f9399d0c 0 1644688788000 4 connected
+            b83ee4d91480749814f9c7099039ce9512a313c9 192.168.188.9:6579@16579 slave 65d7d148c171054e4d2394dc84aaf72915391bfe 0 1644688790168 5 connected
+            9cfd658c1121b5c70e1df03988a111328b061ab7 192.168.188.9:6679@16679 slave 5d9003a5137fe5f96dda619fff7f15c6b993dab5 0 1644688789000 6 connected
+
+            634d7a0fe0c074d829dd7b88a102c9565624e52a 192.168.188.9:6779@16779 master - 0 1644688789157 0 connected
+
+        add-node       new_host:new_port existing_host:existing_port
+                             --cluster-slave
+                             --cluster-master-id <arg>
+        [root@localhost bin]# ./redis-cli -a root --cluster add-node 192.168.188.9:6879 192.168.188.9:6179 --cluster-slave --cluster-master-id 634d7a0fe0c074d829dd7b88a102c9565624e52a
+
+            cluster nodes 展示:
+            65d7d148c171054e4d2394dc84aaf72915391bfe 192.168.188.9:6179@16179 myself,master - 0 1644688790000 1 connected 0-5460
+            5d9003a5137fe5f96dda619fff7f15c6b993dab5 192.168.188.9:6279@16279 master - 0 1644688790000 2 connected 5461-10922
+            21d4b1ebed6a5cbb165145c429cde639f9399d0c 192.168.188.9:6379@16379 master - 0 1644688788000 3 connected 10923-16383
+
+            13da255fa30fd4a4337093ae3d9c0d3a1b3a8023 192.168.188.9:6479@16479 slave 21d4b1ebed6a5cbb165145c429cde639f9399d0c 0 1644688788000 4 connected
+            b83ee4d91480749814f9c7099039ce9512a313c9 192.168.188.9:6579@16579 slave 65d7d148c171054e4d2394dc84aaf72915391bfe 0 1644688790168 5 connected
+            9cfd658c1121b5c70e1df03988a111328b061ab7 192.168.188.9:6679@16679 slave 5d9003a5137fe5f96dda619fff7f15c6b993dab5 0 1644688789000 6 connected
+
+            634d7a0fe0c074d829dd7b88a102c9565624e52a 192.168.188.9:6779@16779 master - 0 1644688789157 0 connected
+            0a14e0255f1d2df65001d6d6c69cc9c59a899494 192.168.188.9:6879@16879 slave 634d7a0fe0c074d829dd7b88a102c9565624e52a 0 1644688791183 0 connected
+
+    最后转移槽 slot
+        reshard        host:port              // 扩容时 写任意一台主机就OK了
+                     --cluster-from <arg>
+                     --cluster-to <arg>
+                     --cluster-slots <arg>
+                     --cluster-yes
+                     --cluster-timeout <arg>
+                     --cluster-pipeline <arg>
+
+        [root@localhost bin]# ./redis-cli -a root --cluster reshard 192.168.188.9:6179
+
+            cluster nodes 展示:
+            65d7d148c171054e4d2394dc84aaf72915391bfe 192.168.188.9:6179@16179 myself,master - 0 1644689990000 1 connected 1365-5460
+            5d9003a5137fe5f96dda619fff7f15c6b993dab5 192.168.188.9:6279@16279 master - 0 1644689991431 2 connected 6827-10922
+            21d4b1ebed6a5cbb165145c429cde639f9399d0c 192.168.188.9:6379@16379 master - 0 1644689988000 3 connected 12288-16383
+
+            13da255fa30fd4a4337093ae3d9c0d3a1b3a8023 192.168.188.9:6479@16479 slave 21d4b1ebed6a5cbb165145c429cde639f9399d0c 0 1644689992444 4 connected
+            b83ee4d91480749814f9c7099039ce9512a313c9 192.168.188.9:6579@16579 slave 65d7d148c171054e4d2394dc84aaf72915391bfe 0 1644689990000 5 connected
+            9cfd658c1121b5c70e1df03988a111328b061ab7 192.168.188.9:6679@16679 slave 5d9003a5137fe5f96dda619fff7f15c6b993dab5 0 1644689992000 6 connected
+
+            634d7a0fe0c074d829dd7b88a102c9565624e52a 192.168.188.9:6779@16779 master - 0 1644689992000 8 connected 0-1364 5461-6826 10923-12287
+            0a14e0255f1d2df65001d6d6c69cc9c59a899494 192.168.188.9:6879@16879 slave 634d7a0fe0c074d829dd7b88a102c9565624e52a 0 1644689989000 8 connected
+
+
+缩容两台:
+    先转移 slot, 再 del-node
+    reshard        host:port                // 扩容时 写任意一台主机就OK了
+                 --cluster-from <arg>
+                 --cluster-to <arg>
+                 --cluster-slots <arg>
+                 --cluster-yes
+                 --cluster-timeout <arg>
+                 --cluster-pipeline <arg>
+
+    首先转移 slot:
+        这三条指令一条一条的执行:
+        [root@localhost bin]# ./redis-cli -a root --cluster reshard 192.168.188.9:6179 --cluster-from 634d7a0fe0c074d829dd7b88a102c9565624e52a --cluster-to 65d7d148c171054e4d2394dc84aaf72915391bfe --cluster-slots 1365
+        [root@localhost bin]# ./redis-cli -a root --cluster reshard 192.168.188.9:6179 --cluster-from 634d7a0fe0c074d829dd7b88a102c9565624e52a --cluster-to 5d9003a5137fe5f96dda619fff7f15c6b993dab5 --cluster-slots 1366
+        [root@localhost bin]# ./redis-cli -a root --cluster reshard 192.168.188.9:6179 --cluster-from 634d7a0fe0c074d829dd7b88a102c9565624e52a --cluster-to 21d4b1ebed6a5cbb165145c429cde639f9399d0c --cluster-slots 1365
+
+        cluster nodes 展示:
+        9cfd658c1121b5c70e1df03988a111328b061ab7 192.168.188.9:6679@16679 slave 5d9003a5137fe5f96dda619fff7f15c6b993dab5 0 1644692708074 10 connected
+        65d7d148c171054e4d2394dc84aaf72915391bfe 192.168.188.9:6179@16179 myself,master - 0 1644692709000 9 connected 0-5460
+        13da255fa30fd4a4337093ae3d9c0d3a1b3a8023 192.168.188.9:6479@16479 slave 21d4b1ebed6a5cbb165145c429cde639f9399d0c 0 1644692712123 11 connected
+        5d9003a5137fe5f96dda619fff7f15c6b993dab5 192.168.188.9:6279@16279 master - 0 1644692713133 10 connected 5461-6825 6827-10922
+        21d4b1ebed6a5cbb165145c429cde639f9399d0c 192.168.188.9:6379@16379 master - 0 1644692712000 11 connected 6826 10923-16383
+        b83ee4d91480749814f9c7099039ce9512a313c9 192.168.188.9:6579@16579 slave 65d7d148c171054e4d2394dc84aaf72915391bfe 0 1644692712000 9 connected
+
+        634d7a0fe0c074d829dd7b88a102c9565624e52a 192.168.188.9:6779@16779 master - 0 1644692712000 8 connected
+        0a14e0255f1d2df65001d6d6c69cc9c59a899494 192.168.188.9:6879@16879 slave 21d4b1ebed6a5cbb165145c429cde639f9399d0c 0 1644692710098 11 connected
+
+    再删除节点:
+        [root@localhost bin]# ./redis-cli -a root --cluster del-node 192.168.188.9:6879 0a14e0255f1d2df65001d6d6c69cc9c59a899494
+        [root@localhost bin]# ./redis-cli -a root --cluster del-node 192.168.188.9:6779 634d7a0fe0c074d829dd7b88a102c9565624e52a
+
+
+./redis-cli -a root --cluster reshard 192.168.188.9:6179 --cluster-from 21d4b1ebed6a5cbb165145c429cde639f9399d0c --cluster-to 5d9003a5137fe5f96dda619fff7f15c6b993dab5 --cluster-slots 1
+
+
+
+
+
+
+
+
+
